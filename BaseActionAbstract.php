@@ -6,6 +6,7 @@
  */
 namespace BasicApp\Crud;
 
+use CodeIgniter\Model;
 use CodeIgniter\Entity;
 use CodeIgniter\Database\Exceptions\DataException;
 use Exception;
@@ -177,19 +178,19 @@ abstract class BaseActionAbstract extends \BasicApp\Core\Behavior implements Act
 
         $model = $this->createModel();
 
-        if (($model instanceof \CodeIgniter\Model) && ($model->returnType == 'array'))
-        {        
-            return $row[$parentKey];
-        }
-
-        if (property_exists($row, $parentKey))
+        if ($model instanceof \CodeIgniter\Model)
         {
-            return $row->{$parentKey};
-        }
-
-        if ($throwException)
-        {
-            throw new Exception('Unknown parent key.');
+            if ($model->returnType == 'array')
+            {
+                if (array_key_exists($parentKey, $row))
+                {
+                    return $row[$parentKey];
+                }
+            }
+            else
+            {
+                return $row->$parentKey;
+            }
         }
 
         return null;

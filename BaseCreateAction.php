@@ -33,11 +33,13 @@ abstract class BaseCreateAction extends ActionAbstract
             }
         }
 
+        $parentId = $this->entityParentKey($data);
+
         return $this->render($this->view, [
             'model' => $model,
             'data' => $data,
             'errors' => $errors,
-            'parentId' => $this->entityParentKey($data)
+            'parentId' => $parentId
         ]);
     }
 
