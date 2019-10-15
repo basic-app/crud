@@ -6,6 +6,7 @@
  */
 namespace BasicApp\Crud;
 
+use CodeIgniter\Entity;
 use CodeIgniter\Database\Exceptions\DataException;
 use Exception;
 use Config\Database;
