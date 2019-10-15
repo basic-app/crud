@@ -117,7 +117,7 @@ abstract class BaseActionAbstract extends \BasicApp\Core\Behavior implements Act
 		return $function($view, $params);
 	}
 
-    public function redirectBack(string $defaultUrl)
+    public function redirectBack($defaultUrl)
     {        
         $function = $this->redirectBackFunction;
 
