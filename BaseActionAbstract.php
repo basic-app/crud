@@ -128,7 +128,7 @@ abstract class BaseActionAbstract extends \BasicApp\Core\Behavior implements Act
     {
         $modelClass = $this->modelClass;
 
-        $allowedFields = $modelClass::getDefaultProperty('allowedFields');
+        $allowedFields = $modelClass::defaultProperty('allowedFields');
 
         foreach($values as $key => $value)
         {
