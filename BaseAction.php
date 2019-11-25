@@ -12,10 +12,11 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Database\Exceptions\DataException;
 use Exception;
 use Config\Database;
-use BasicApp\Interfaces\ActionInterface;
 
-abstract class BaseAction extends \BasicApp\Core\Behavior implements ActionInterface
+abstract class BaseAction
 {
+
+    protected $owner;
 
     public $request;
 
@@ -39,9 +40,7 @@ abstract class BaseAction extends \BasicApp\Core\Behavior implements ActionInter
 
     public $parentKey;
 
-    //public $parentKeyIndex = 'parentId';
-
-    public $primaryKeyIndex = 'id';
+    public $primaryKey = 'id';
 
 	const EVENT_CREATE_MODEL = 'onCreateModel';
 
@@ -52,6 +51,20 @@ abstract class BaseAction extends \BasicApp\Core\Behavior implements ActionInter
         $this->db = Database::connect();
 
         $this->request = service('request');
+    }
+
+    public static function factory(array $params = [])
+    {
+        $class = get_called_class();
+
+        $return = new $class;
+
+        foreach($params as $key => $value)
+        {
+            $return->$key = $value;
+        }
+
+        return $return;
     }
 
 	/**
@@ -226,7 +239,7 @@ abstract class BaseAction extends \BasicApp\Core\Behavior implements ActionInter
 
     protected function findEntity(bool $throwException = true)
     {
-        $id = $this->request->getGet($this->primaryKeyIndex);
+        $id = $this->request->getGet($this->primaryKey);
 
         if (!$id)
         {
