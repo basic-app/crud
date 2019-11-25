@@ -8,7 +8,7 @@ namespace BasicApp\Crud;
 
 use Exception;
 
-abstract class BaseDeleteAction extends ActionAbstract
+abstract class BaseDeleteAction extends Action
 {
 
     public function run(array $options = [])

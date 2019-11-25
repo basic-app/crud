@@ -8,12 +8,13 @@ namespace BasicApp\Crud;
 
 use CodeIgniter\Model;
 use CodeIgniter\Entity;
+use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Database\Exceptions\DataException;
 use Exception;
 use Config\Database;
 use BasicApp\Interfaces\ActionInterface;
 
-abstract class BaseActionAbstract extends \BasicApp\Core\Behavior implements ActionInterface
+abstract class BaseAction extends \BasicApp\Core\Behavior implements ActionInterface
 {
 
     public $request;

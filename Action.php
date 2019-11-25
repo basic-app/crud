@@ -6,6 +6,6 @@
  */
 namespace BasicApp\Crud;
 
-abstract class ActionAbstract extends BaseActionAbstract
+abstract class Action extends BaseAction
 {
 }

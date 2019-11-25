@@ -6,7 +6,7 @@
  */
 namespace BasicApp\Crud;
 
-abstract class BaseViewAction extends ActionAbstract
+abstract class BaseViewAction extends Action
 {
 
     public $view;

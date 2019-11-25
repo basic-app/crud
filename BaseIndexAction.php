@@ -6,7 +6,7 @@
  */
 namespace BasicApp\Crud;
 
-abstract class BaseIndexAction extends ActionAbstract
+abstract class BaseIndexAction extends Action
 {
 
     const EVENT_BEFORE_FIND = 'onBeforeFind';
