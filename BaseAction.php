@@ -13,7 +13,7 @@ use CodeIgniter\Database\Exceptions\DataException;
 use Exception;
 use Config\Database;
 
-abstract class BaseAction
+abstract class BaseAction implements ActionInterface
 {
 
     protected $owner;
