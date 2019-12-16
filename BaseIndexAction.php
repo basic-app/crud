@@ -19,7 +19,7 @@ abstract class BaseIndexAction extends Action
 
     public function run(array $options = [])
     {
-        $query = $this->createModel();
+        $model = $this->createModel();
 
         $searchModel = $this->createSearchModel();
 
@@ -29,7 +29,7 @@ abstract class BaseIndexAction extends Action
 
             $search->fill($this->request->getGet());
 
-            $searchModel::applyToQuery($search, $query);
+            $searchModel::applyToQuery($search, $model);
         }
         else
         {
@@ -44,7 +44,7 @@ abstract class BaseIndexAction extends Action
 
             if ($parentId)
             {
-                $query->where($parentKey, $parentId);
+                $model->where($parentKey, $parentId);
             }
         }
         else
@@ -54,25 +54,26 @@ abstract class BaseIndexAction extends Action
 
         if ($this->orderBy)
         {
-            $query->orderBy($this->orderBy);
+            $model->orderBy($this->orderBy);
         }
 
-        $this->trigger(static::EVENT_BEFORE_FIND, ['query' => $query]);
+        $this->trigger(static::EVENT_BEFORE_FIND, ['model' => $model]);
 
         $perPage = $this->perPage;
 
         if ($perPage)
         {
-            $elements = $query->paginate($perPage);
+            $elements = $model->paginate($perPage);
         }
         else
         {
-            $elements = $query->findAll();
+            $elements = $model->findAll();
         }
 
         return $this->render($this->view, [
+            'model' => $model,
             'elements' => $elements,
-            'pager' => $query->pager,
+            'pager' => $model->pager,
             'parentId' => $parentId,
             'parentKey' => $parentKey,
             'searchModel' => $searchModel,
