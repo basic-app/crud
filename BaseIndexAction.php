@@ -19,7 +19,7 @@ abstract class BaseIndexAction extends Action
 
     public function run(array $options = [])
     {
-        $model = $this->createModel();
+        $query = $this->createModel();
 
         $searchModel = $this->createSearchModel();
 
@@ -29,7 +29,14 @@ abstract class BaseIndexAction extends Action
 
             $search->fill($this->request->getGet());
 
-            $searchModel::applyToQuery($search, $model);
+            if ($searchModel->validate($search))
+            {
+                $search->applyToQuery($query);
+            }
+            else
+            {
+                $query->where('1=0');
+            }
         }
         else
         {
@@ -44,7 +51,7 @@ abstract class BaseIndexAction extends Action
 
             if ($parentId)
             {
-                $model->where($parentKey, $parentId);
+                $query->where($parentKey, $parentId);
             }
         }
         else
@@ -54,21 +61,23 @@ abstract class BaseIndexAction extends Action
 
         if ($this->orderBy)
         {
-            $model->orderBy($this->orderBy);
+            $query->orderBy($this->orderBy);
         }
 
-        $this->trigger(static::EVENT_BEFORE_FIND, ['model' => $model]);
+        $this->trigger(static::EVENT_BEFORE_FIND, ['query' => $query]);
 
         $perPage = $this->perPage;
 
         if ($perPage)
         {
-            $elements = $model->paginate($perPage);
+            $elements = $query->paginate($perPage);
         }
         else
         {
-            $elements = $model->findAll();
+            $elements = $query->findAll();
         }
+
+        $model = $this->createModel();
 
         return $this->render($this->view, [
             'model' => $model,
@@ -77,7 +86,8 @@ abstract class BaseIndexAction extends Action
             'parentId' => $parentId,
             'parentKey' => $parentKey,
             'searchModel' => $searchModel,
-            'search' => $search
+            'search' => $search,
+            'searchErrors' => $searchModel ? (array) $searchModel->errors() : []
         ]);
     }
 
