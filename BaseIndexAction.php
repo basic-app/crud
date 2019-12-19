@@ -19,7 +19,9 @@ abstract class BaseIndexAction extends Action
 
     public function run(array $options = [])
     {
-        $query = $this->createModel();
+        $model = $this->createModel();
+
+        $query = $model->builder();
 
         $searchModel = $this->createSearchModel();
 
@@ -77,12 +79,10 @@ abstract class BaseIndexAction extends Action
             $elements = $query->findAll();
         }
 
-        $model = $this->createModel();
-
         return $this->render($this->view, [
             'model' => $model,
             'elements' => $elements,
-            'pager' => $model->pager,
+            'pager' => $query->pager,
             'parentId' => $parentId,
             'parentKey' => $parentKey,
             'searchModel' => $searchModel,
