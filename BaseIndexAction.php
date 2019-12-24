@@ -55,6 +55,10 @@ abstract class BaseIndexAction extends Action
             {
                 $query->where($parentKey, $parentId);
             }
+            else
+            {
+                $query->where($parentKey, null);
+            }
         }
         else
         {
