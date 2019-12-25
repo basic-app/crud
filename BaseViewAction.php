@@ -15,7 +15,9 @@ abstract class BaseViewAction extends Action
     {
         $errors = [];
 
-        $row = $this->findEntity();
+        $model = $this->createModel();
+
+        $row = $this->findEntity($model);
 
         return $this->render($this->view, [
             'model' => $row,

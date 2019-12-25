@@ -17,7 +17,7 @@ abstract class BaseUpdateAction extends Action
 
         $errors = [];
 
-        $data = $this->findEntity();
+        $data = $this->findEntity($model);
 
         $post = $this->request->getPost();
 

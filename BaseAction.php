@@ -237,7 +237,7 @@ abstract class BaseAction implements ActionInterface
         return $return;
     }
 
-    protected function findEntity(bool $throwException = true)
+    protected function findEntity(Model $model, bool $throwException = true)
     {
         $id = $this->request->getGet($this->primaryKey);
 
@@ -245,8 +245,6 @@ abstract class BaseAction implements ActionInterface
         {
             throw new PageNotFoundException;
         }
-
-        $model = $this->createModel();
 
         $row = $model->find($id);
 

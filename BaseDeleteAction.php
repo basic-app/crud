@@ -13,17 +13,22 @@ abstract class BaseDeleteAction extends Action
 
     public function run(array $options = [])
     {
-        $query = $this->createModel();
+        $model = $this->createModel();
 
-        $row = $this->findEntity();
+        $data = $this->findEntity($model);
 
         if ($this->request->getPost())
         {
-            $primaryKey = $this->entityPrimaryKey($row);
+            $id = $model::entityPrimaryKey($data);
 
-            if (!$query->delete($primaryKey))
+            if (!$id)
             {
-                throw new Exception('Record is not deleted.');
+                throw new Exception('Primary key not defined.');
+            }
+
+            if (!$model->delete($id))
+            {
+                throw new Exception('Entity not deleted.');
             }
         }
         else
