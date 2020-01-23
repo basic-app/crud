@@ -27,13 +27,18 @@ abstract class BaseIndexAction extends Action
 
         if ($searchModel)
         {
-            $search = $searchModel->createEntity();
-
-            $search->fill($this->request->getGet());
+            $search = $searchModel->createEntity($this->request->getGet());
 
             if ($searchModel->validate($search))
             {
-                $search->applyToQuery($query);
+                if (is_array($search) || !method_exists($search, 'applyToQuery'))
+                {
+                    $searchModel->applyToQuery($query, $search);
+                }
+                else
+                {
+                    $search->applyToQuery($query);
+                }
             }
             else
             {
