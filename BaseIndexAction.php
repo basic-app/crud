@@ -9,13 +9,11 @@ namespace BasicApp\Crud;
 abstract class BaseIndexAction extends Action
 {
 
-    const EVENT_BEFORE_FIND = 'onBeforeFind';
-
     protected $orderBy;
 
     protected $perPage = 25;
 
-    protected $onBeforeFind = [];
+    protected $beforeFind;
 
     public function run(array $options = [])
     {
@@ -75,7 +73,10 @@ abstract class BaseIndexAction extends Action
             $query->orderBy($this->orderBy);
         }
 
-        $this->trigger(static::EVENT_BEFORE_FIND, ['query' => $query]);
+        if (is_callable($this->beforeFind))
+        {
+            call_user_func($this->beforeFind, $query);
+        }
 
         $perPage = $this->perPage;
 

@@ -12,11 +12,12 @@ trait CrudTrait
     public function index()
     {
         return $this->createCrudAction(IndexAction::class, [
-            'view' => 'index',
-            'searchModelClass' => property_exists($this, 'searchModelClass') ? $this->searchModelClass : null,
-            'perPage' => property_exists($this, 'perPage') ? $this->perPage : null,
-            'orderBy' => property_exists($this, 'orderBy') ? $this->orderBy : null,
-            'parentKey' => property_exists($this, 'parentKey') ? $this->parentKey : null
+            'view' => $this->indexTemplate ?? 'index',
+            'searchModelClass' => $this->searchModelClass ?? null,
+            'perPage' => $this->perPage ?? null,
+            'orderBy' => $this->orderBy ?? null,
+            'parentKey' => $this->parentKey ?? null,
+            'beforeFind' => $this->beforeFind ?? null
         ])->run();
     }
 
