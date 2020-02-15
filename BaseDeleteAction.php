@@ -7,6 +7,7 @@
 namespace BasicApp\Crud;
 
 use Exception;
+use BasicApp\Exceptions\ForbiddenException;
 
 abstract class BaseDeleteAction extends Action
 {
@@ -33,7 +34,7 @@ abstract class BaseDeleteAction extends Action
         }
         else
         {
-            throw new PageNotFoundException;
+            throw new ForbiddenException;
         }
 
         return $this->redirectBack($this->returnUrl);
