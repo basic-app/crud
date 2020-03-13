@@ -227,12 +227,7 @@ abstract class BaseAction implements ActionInterface
 
         $return = $model->save($row);
 
-        $errors = $model->errors();
-
-        if (!$errors)
-        {
-            $errors = [];
-        }
+        $errors = (array) $model->errors();
 
         return $return;
     }
