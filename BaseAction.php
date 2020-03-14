@@ -221,17 +221,6 @@ abstract class BaseAction implements ActionInterface
         return $return;
     }
 
-    protected function saveEntity($row, &$errors)
-    {
-        $model = $this->createModel();
-
-        $return = $model->save($row);
-
-        $errors = (array) $model->errors();
-
-        return $return;
-    }
-
     protected function findEntity(Model $model, bool $throwException = true)
     {
         $id = $this->request->getGet($this->primaryKey);

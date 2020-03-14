@@ -15,8 +15,6 @@ abstract class BaseUpdateAction extends Action
     {
         $model = $this->createModel();
 
-        $errors = [];
-
         $data = $this->findEntity($model);
 
         $post = $this->request->getPost();
@@ -25,14 +23,14 @@ abstract class BaseUpdateAction extends Action
         {
             $data = $this->fillEntity($data, $post);
 
-            if ($this->saveEntity($data, $errors))
+            if ($model->save($data))
             {
                 return $this->redirectBack($this->returnUrl);
             }
         }
 
         return $this->render($this->view, [
-            'errors' => $errors,
+            'errors' => (array) $model->errors(),
             'data' => $data,
             'model' => $model,
             'parentId' => $this->entityParentKey($data)

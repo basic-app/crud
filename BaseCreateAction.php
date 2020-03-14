@@ -15,8 +15,6 @@ abstract class BaseCreateAction extends Action
     {
         $model = $this->createModel();
 
-        $errors = [];
-
         $get = $this->request->getGet();
 
         $data = $this->createEntity($get);
@@ -27,7 +25,7 @@ abstract class BaseCreateAction extends Action
         {
             $data = $this->fillEntity($data, $post);
 
-            if ($this->saveEntity($data, $errors))
+            if ($model->save($data))
             {
                 return $this->redirectBack($this->returnUrl);
             }
@@ -38,7 +36,7 @@ abstract class BaseCreateAction extends Action
         return $this->render($this->view, [
             'model' => $model,
             'data' => $data,
-            'errors' => $errors,
+            'errors' => (array) $model->errors(),
             'parentId' => $parentId
         ]);
     }
