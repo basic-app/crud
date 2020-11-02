@@ -4,11 +4,12 @@
  * @license MIT
  * @link https://basic-app.com
  */
-namespace BasicApp\Crud;
+namespace BasicApp\Crud\Actions;
 
-class UpdateAction extends BasicApp\Action\BaseAction
+class UpdateAction extends \BasicApp\Action\BaseAction
 {
 
+    /*
     public $view;
 
     public function run(array $options = [])
@@ -36,5 +37,10 @@ class UpdateAction extends BasicApp\Action\BaseAction
             'parentId' => $this->entityParentKey($data)
         ]);
     }
+    */
+
+    public function _remap($method, ...$params)
+    {
+    }    
 
 }

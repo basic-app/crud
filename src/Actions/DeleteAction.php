@@ -4,14 +4,15 @@
  * @license MIT
  * @link https://basic-app.com
  */
-namespace BasicApp\Crud;
+namespace BasicApp\Crud\Actions;
 
-use Exception;
-use BasicApp\Exceptions\ForbiddenException;
+//use Exception;
+//use BasicApp\Exceptions\ForbiddenException;
 
 class DeleteAction extends \BasicApp\Action\BaseAction
 {
 
+    /*
     public function run(array $options = [])
     {
         $model = $this->createModel();
@@ -38,6 +39,11 @@ class DeleteAction extends \BasicApp\Action\BaseAction
         }
 
         return $this->redirectBack($this->returnUrl);
+    }
+    */
+
+    public function _remap($method, ...$params)
+    {
     }
 
 }

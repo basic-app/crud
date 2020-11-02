@@ -4,11 +4,13 @@
  * @license MIT
  * @link https://basic-app.com
  */
-namespace BasicApp\Crud;
+namespace BasicApp\Crud\Actions;
 
 abstract class ListAction extends \BasicApp\Action\BaseAction
 {
+    
 
+    /*
     protected $orderBy;
 
     protected $perPage = 25;
@@ -100,5 +102,11 @@ abstract class ListAction extends \BasicApp\Action\BaseAction
             'searchErrors' => $searchModel ? (array) $searchModel->errors() : []
         ]);
     }
+    */
+
+    public function _remap($method, ...$params)
+    {
+    }
+   
 
 }

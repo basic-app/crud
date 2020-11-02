@@ -4,11 +4,12 @@
  * @license MIT
  * @link https://basic-app.com
  */
-namespace BasicApp\Crud;
+namespace BasicApp\Crud\Actions;
 
 class CreateAction extends \BasicApp\Action\BaseAction
 {
 
+    /*
     public $view;
 
     public function run(array $options = [])
@@ -39,6 +40,12 @@ class CreateAction extends \BasicApp\Action\BaseAction
             'errors' => (array) $model->errors(),
             'parentId' => $parentId
         ]);
+    }
+
+    */
+
+    public function _remap($method, ...$params)
+    {
     }
 
 }
