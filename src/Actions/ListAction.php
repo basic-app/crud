@@ -6,7 +6,7 @@
  */
 namespace BasicApp\Crud\Actions;
 
-abstract class ListAction extends \BasicApp\Action\BaseAction
+class ListAction extends \BasicApp\Action\BaseAction
 {
     
 
