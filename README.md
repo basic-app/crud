@@ -3,4 +3,4 @@
 
 ## Testing
 
-test vendor/basic-app/crud/Tests
+test vendor/basic-app/crud/tests
