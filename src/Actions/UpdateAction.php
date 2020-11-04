@@ -6,41 +6,110 @@
  */
 namespace BasicApp\Crud\Actions;
 
+use CodeIgniter\Exceptions\PageNotFoundException;
+
 class UpdateAction extends \BasicApp\Action\BaseAction
 {
 
-    /*
-    public $view;
+    protected $view = 'update';
 
-    public function run(array $options = [])
-    {
-        $model = $this->createModel();
-
-        $data = $this->findEntity($model);
-
-        $post = $this->request->getPost();
-
-        if ($post)
-        {
-            $data = $this->fillEntity($data, $post);
-
-            if ($model->save($data))
-            {
-                return $this->redirectBack($this->returnUrl);
-            }
-        }
-
-        return $this->render($this->view, [
-            'errors' => (array) $model->errors(),
-            'data' => $data,
-            'model' => $model,
-            'parentId' => $this->entityParentKey($data)
-        ]);
-    }
-    */
+    protected $backUrl;
 
     public function _remap($method, ...$params)
     {
-    }    
+        $view = $this->view;
+
+        $backUrl = $this->backUrl;
+
+        $return = function($method, ...$params) use ($view, $backUrl) {
+
+            $errors = [];
+
+            $customErrors = [];
+
+            $model = model($this->formModelClass);
+
+            $id = $this->request->getGet('id');
+
+            if (!$id)
+            {
+                throw PageNotFoundException::forPageNotFound();
+            }
+
+            $entity = $model->find($id);
+
+            if (!$entity)
+            {
+                throw PageNotFoundException::forPageNotFound();
+            }
+
+            $post = $this->request->getPost();
+
+            if ($post)
+            {
+                if ($model->returnType == 'array')
+                {
+                    $hasChanged = false;
+
+                    foreach($post as $key => $value)
+                    {
+                        if (!array_key_exists($key, $entity) || ($value != $entity[$key]))
+                        {
+                            $entity[$key] = $value;
+
+                            $hasChanged = true;
+                        }
+                    }
+                }
+                else
+                {
+                    $entity->fill($post);
+                
+                    $hasChanged = $entity->hasChanged();
+                }
+
+                if (!$hasChanged || $model->save($entity))
+                {
+                    if (!$backUrl)
+                    {
+                        $backUrl = $this->backUrl;
+                    }
+
+                    return $this->redirectBack($backUrl);
+                }
+                else
+                {
+                    $errors = (array) $model->errors();
+                }
+            }
+
+            $parentId = null;
+
+            if ($this->parentKey)
+            {
+                if ($model->returnType == 'array')
+                {
+                    $parentId = $entity[$this->parentKey];
+                }
+                else
+                {
+                    $parentId = $entity->{$this->parentKey};
+                }
+            }
+
+            return $this->render($view, [
+                'model' => $model,
+                'entity' => $entity,
+                'errors' => $errors,
+                'customErrors' => $customErrors,
+                'parentKey' => $this->parentKey,
+                'parentId' => $parentId
+            ]);
+        };
+
+        $return = $return->bindTo($this->controller, get_class($this->controller));
+
+        return $return;
+    }
 
 }

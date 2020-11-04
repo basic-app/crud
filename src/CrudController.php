@@ -19,9 +19,13 @@ abstract class CrudController extends \BasicApp\Controller\BaseController
 
     protected $searchModelClass;
 
+    protected $formModelClass;
+
     protected $parentKey;
 
     protected $perPage = 25;
+
+    protected $backUrl = 'index';
 
     protected $actions = [
         'index' => [IndexAction::class],

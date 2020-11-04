@@ -11,7 +11,7 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 class ViewAction extends \BasicApp\Action\BaseAction
 {
 
-    public $view = 'view';
+    protected $view = 'view';
 
     public function _remap($method, ...$params)
     {
