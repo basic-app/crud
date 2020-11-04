@@ -29,8 +29,8 @@ class IndexAction extends \BasicApp\Action\BaseAction
 
         $orderBy = $this->orderBy;
 
-        $return = function($method, ...$params) use ($view, $perPage, $beforeFind, $orderBy)
-        {
+        $return = function($method, ...$params) use ($view, $perPage, $beforeFind, $orderBy) {
+
             $model = model($this->modelClass);
 
             $query = $model->builder();
@@ -136,7 +136,7 @@ class IndexAction extends \BasicApp\Action\BaseAction
 
             $pager = $query->pager;
 
-            $params = [
+            return $this->render($view, [
                 'model' => $model,
                 'elements' => $elements,
                 'pager' => $pager,
@@ -146,9 +146,7 @@ class IndexAction extends \BasicApp\Action\BaseAction
                 'search' => $search,
                 'searchErrors' => $searchErrors,
                 'searchCustomErrors' => $searchCustomErrors
-            ];
-
-            return $this->render($view, $params);
+            ]);
         };
 
         $return = $return->bindTo($this->controller, get_class($this->controller));
