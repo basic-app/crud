@@ -19,43 +19,13 @@ class DeleteAction extends \BasicApp\Action\BaseAction
 
     public $backUrl;
 
-    /*
-    public function run(array $options = [])
-    {
-        $model = $this->createModel();
-
-        $data = $this->findEntity($model);
-
-        if ($this->request->getPost())
-        {
-            $id = $model::entityPrimaryKey($data);
-
-            if (!$id)
-            {
-                throw new Exception('Primary key not defined.');
-            }
-
-            if (!$model->delete($id))
-            {
-                throw new Exception('Entity not deleted.');
-            }
-        }
-        else
-        {
-            throw new ForbiddenException;
-        }
-
-        return $this->redirectBack($this->returnUrl);
-    }
-    */
-
     public function _remap($method, ...$params)
     {
         $backUrl = $this->backUrl;
 
         $return = function($method, ...$params) use ($backUrl) {
 
-            $model = model($this->modelClass);
+            $model = model($this->modelClass, false);
 
             $id = $this->request->getGet('id');
 

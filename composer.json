@@ -7,7 +7,6 @@
         }
     },
     "require": {
-        "basic-app/core": "*",
         "basic-app/controller": "*"
     }
 }

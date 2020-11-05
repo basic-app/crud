@@ -21,7 +21,7 @@ class ViewAction extends \BasicApp\Action\BaseAction
 
             assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
 
-            $model = model($this->modelClass);
+            $model = model($this->modelClass, false);
 
             assert($this->modelClass ? true : false, $this->modelClass);
 

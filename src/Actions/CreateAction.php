@@ -23,7 +23,7 @@ class CreateAction extends \BasicApp\Action\BaseAction
 
             assert($this->formModelClass ? true : false, __CLASS__ . '::formModelClass');
 
-            $model = model($this->formModelClass);
+            $model = model($this->formModelClass, false);
 
             assert($model ? true : false, $this->formModelClass);
 

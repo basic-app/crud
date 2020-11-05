@@ -33,7 +33,7 @@ class IndexAction extends \BasicApp\Action\BaseAction
 
             assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
 
-            $model = model($this->modelClass);
+            $model = model($this->modelClass, false);
 
             assert($model ? true : false, $this->modelClass);
 
@@ -49,7 +49,7 @@ class IndexAction extends \BasicApp\Action\BaseAction
 
             if ($this->searchModelClass)
             {
-                $searchModel = model($this->searchModelClass);
+                $searchModel = model($this->searchModelClass, false);
 
                 assert($searchModel, $this->searchModelClass);
 

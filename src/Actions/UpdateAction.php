@@ -29,7 +29,7 @@ class UpdateAction extends \BasicApp\Action\BaseAction
 
             $customErrors = [];
 
-            $model = model($this->formModelClass);
+            $model = model($this->formModelClass, false);
 
             assert($model ? true : false, $this->formModelClass);
 
