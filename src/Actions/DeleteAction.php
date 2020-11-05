@@ -5,14 +5,9 @@
  * @link https://basic-app.com
  */
 namespace BasicApp\Crud\Actions;
-
-//use Exception;
-//use BasicApp\Exceptions\ForbiddenException;
-//      if ($this->request->getPost())
-//        {
-//          throw new ForbiddenException;
   
 use CodeIgniter\Exceptions\PageNotFoundException;
+use CodeIgniter\Security\Exceptions\SecurityException;
 
 class DeleteAction extends \BasicApp\Action\BaseAction
 {
@@ -24,6 +19,13 @@ class DeleteAction extends \BasicApp\Action\BaseAction
         $backUrl = $this->backUrl;
 
         $return = function($method, ...$params) use ($backUrl) {
+
+            $csrf = $this->request->getGet(csrf_token());
+
+            if ($csrf != csrf_hash())
+            {
+                throw SecurityException::forDisallowedAction();
+            }
 
             $model = model($this->modelClass, false);
 
@@ -40,18 +42,6 @@ class DeleteAction extends \BasicApp\Action\BaseAction
             {
                 throw PageNotFoundException::forPageNotFound();
             }
-
-            //if ($this->parentKey)
-            //{
-            //    $root = $entity;
-
-            //    $childrens = $model->builder()->where($this->parentKey, $root->id)->findAll();
-
-            //    foreach($childrens as $child)
-            //    {
-            //        $model->delete($model->entityPrimaryKey($child));
-            //    }
-            //}
 
             $model->deleteEntity($entity);
 
