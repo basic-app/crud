@@ -31,13 +31,17 @@ class IndexAction extends \BasicApp\Action\BaseAction
 
         $return = function($method, ...$params) use ($view, $perPage, $beforeFind, $orderBy) {
 
+            assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
+
             $model = model($this->modelClass);
+
+            assert($model ? true : false, $this->modelClass);
 
             $query = $model->builder();
 
             $searchModel = null;
 
-            $search = [];
+            $search = null;
 
             $searchErrors = [];
 
@@ -47,36 +51,21 @@ class IndexAction extends \BasicApp\Action\BaseAction
             {
                 $searchModel = model($this->searchModelClass);
 
-                $searchReturnType = $searchModel->returnType;
+                assert($searchModel, $this->searchModelClass);
 
-                if ($searchReturnType != 'array')
-                {
-                    $search = new $searchReturnType;
-                }
+                $search = $searchModel->createEntity();
 
                 $request = $this->request->getGet();
 
                 if ($request)
                 {
-                    if (is_array($search))
-                    {
-                        foreach($request as $key => $value)
-                        {
-                            $search[$key] = $value;
-                        }
-
-                        // @todo set default attributes
-                    }
-                    else
-                    {
-                        $search->fill($request);
-                    }
+                    $searchModel->fillEntity($search, $request);
 
                     if ($searchModel->validate($search))
                     {
-                        if (is_array($search))
+                        if ($searchModel->returnType == 'array')
                         {
-                            $searchModel->applyToQuery($search, $query);
+                            $searchModel->entityApplyToQuery($search, $query);
                         }
                         else
                         {
@@ -87,7 +76,7 @@ class IndexAction extends \BasicApp\Action\BaseAction
                     {
                         $query->where('1=0');
 
-                        $searchErrors = $searchModel ? (array) $searchModel->errors() : [];
+                        $searchErrors = (array) $searchModel->errors();
                     }
                 }
             }

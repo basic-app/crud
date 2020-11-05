@@ -23,11 +23,15 @@ class UpdateAction extends \BasicApp\Action\BaseAction
 
         $return = function($method, ...$params) use ($view, $backUrl) {
 
+            assert($this->formModelClass ? true : false, __CLASS__ . '::formModelClass');
+
             $errors = [];
 
             $customErrors = [];
 
             $model = model($this->formModelClass);
+
+            assert($model ? true : false, $this->formModelClass);
 
             $id = $this->request->getGet('id');
 
@@ -47,26 +51,7 @@ class UpdateAction extends \BasicApp\Action\BaseAction
 
             if ($post)
             {
-                if ($model->returnType == 'array')
-                {
-                    $hasChanged = false;
-
-                    foreach($post as $key => $value)
-                    {
-                        if (!array_key_exists($key, $entity) || ($value != $entity[$key]))
-                        {
-                            $entity[$key] = $value;
-
-                            $hasChanged = true;
-                        }
-                    }
-                }
-                else
-                {
-                    $entity->fill($post);
-                
-                    $hasChanged = $entity->hasChanged();
-                }
+                $hasChanged = $model->fillEntity($entity, $post);
 
                 if (!$hasChanged || $model->save($entity))
                 {
@@ -83,19 +68,7 @@ class UpdateAction extends \BasicApp\Action\BaseAction
                 }
             }
 
-            $parentId = null;
-
-            if ($this->parentKey)
-            {
-                if ($model->returnType == 'array')
-                {
-                    $parentId = $entity[$this->parentKey];
-                }
-                else
-                {
-                    $parentId = $entity->{$this->parentKey};
-                }
-            }
+            $parentId = $model->entityParentKey($entity);
 
             return $this->render($view, [
                 'model' => $model,

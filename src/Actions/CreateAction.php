@@ -21,41 +21,33 @@ class CreateAction extends \BasicApp\Action\BaseAction
 
         $return = function($method, ...$params) use ($view, $backUrl) {
 
+            assert($this->formModelClass ? true : false, __CLASS__ . '::formModelClass');
+
             $model = model($this->formModelClass);
+
+            assert($model ? true : false, $this->formModelClass);
 
             $errors = [];
 
             $customErrors = [];
 
-            if ($model->returnType == 'array')
-            {
-                $entity = [];
-            }
-            else
-            {
-                $modelClass = $model->returnType;
+            $entity = $model->createEntity();
 
-                $entity = new $modelClass;
+            if ($this->parentKey)
+            {
+                $parentId = $this->request->getGet('parentId');
+
+                if ($parentId)
+                {
+                    $model->setEntityParentKey($entity, $parentId);
+                }
             }
 
             $post = $this->request->getPost();
 
             if ($post)
             {
-                if ($model->returnType == 'array')
-                {
-                    foreach($post as $key => $value)
-                    {
-                        if (!array_key_exists($key, $entity) || ($value != $entity[$key]))
-                        {
-                            $entity[$key] = $value;
-                        }
-                    }
-                }
-                else
-                {
-                    $entity->fill($post);
-                }
+                $model->fillEntity($entity, $post);
 
                 if ($model->save($entity))
                 {

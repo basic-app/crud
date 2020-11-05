@@ -19,7 +19,11 @@ class ViewAction extends \BasicApp\Action\BaseAction
 
         $return = function($method, ...$params) use ($view) {
 
+            assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
+
             $model = model($this->modelClass);
+
+            assert($this->modelClass ? true : false, $this->modelClass);
 
             $id = $this->request->getGet('id');
 
@@ -35,19 +39,7 @@ class ViewAction extends \BasicApp\Action\BaseAction
                 throw PageNotFoundException::forPageNotFound();
             }
 
-            $parentId = null;
-
-            if ($this->parentKey)
-            {
-                if ($model->returnType == 'array')
-                {
-                    $parentId = $entity[$this->parentKey];
-                }
-                else
-                {
-                    $parentId = $entity->{$this->parentKey};
-                }
-            }
+            $parentId = $model->entityParentKey($entity);
 
             return $this->render($view, [
                 'entity' => $entity,
