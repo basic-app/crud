@@ -6,6 +6,8 @@
  */
 namespace BasicApp\Crud\Events;
 
+use Psr\Log\LoggerInterface;
+
 class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
 {
 
@@ -13,9 +15,9 @@ class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
 
     public $result;
 
-    public function __construct($entity)
+    public function __construct(?LoggerInterface $logger, $entity)
     {
-        parent::__construct();
+        parent::__construct($logger);
 
         $this->entity = $entity;
     }
