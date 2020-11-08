@@ -11,13 +11,15 @@ use BasicApp\Controller\ControllerInterface;
 class IndexAction extends \BasicApp\Action\BaseAction
 {
 
-    protected $perPage;
+    protected $perPage = 25;
 
     protected $view = 'index';
 
     protected $orderBy;
 
-    protected $beforeFind;
+    protected $beforeFindEvent;
+
+    protected $renderEvent;
     
     public function _remap($method, ...$params)
     {

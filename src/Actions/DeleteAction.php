@@ -8,23 +8,33 @@ namespace BasicApp\Crud\Actions;
   
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Security\Exceptions\SecurityException;
+use BasicApp\Crud\Events\BeforeDeleteEvent;
 
 class DeleteAction extends \BasicApp\Action\BaseAction
 {
 
     public $backUrl;
 
+    public $beforeDeleteEvent;
+
+    public $enableCsrfValidation = true;
+
     public function _remap($method, ...$params)
     {
         $backUrl = $this->backUrl;
 
-        $return = function($method, ...$params) use ($backUrl) {
+        $beforeDeleteEvent = $this->beforeDeleteEvent;
 
-            $csrf = $this->request->getGet(csrf_token());
+        $enableCsrfValidation = $this->enableCsrfValidation;
 
-            if ($csrf != csrf_hash())
+        $return = function($method, ...$params) use ($backUrl, $beforeDeleteEvent, $enableCsrfValidation) {
+
+            if ($this->enableCsrfValidation && ($this->request->method !== 'POST'))
             {
-                throw SecurityException::forDisallowedAction();
+                if ($this->request->getGet(csrf_token()) != csrf_hash())
+                {
+                    throw SecurityException::forDisallowedAction();
+                }
             }
 
             $model = model($this->modelClass, false);
@@ -41,6 +51,18 @@ class DeleteAction extends \BasicApp\Action\BaseAction
             if (!$entity)
             {
                 throw PageNotFoundException::forPageNotFound();
+            }
+
+            if ($beforeDeleteEvent)
+            {
+                $event = new BeforeDeleteEvent($entity);
+
+                $event->trigger($beforeDeleteEvent);
+
+                if ($event->result)
+                {
+                    return $event->result;
+                }
             }
 
             $model->deleteEntity($entity);
