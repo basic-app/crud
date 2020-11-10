@@ -1,11 +1,13 @@
 <?php
 /**
- * @author Basic App Dev Team
+ * @author Basic App Dev Team <dev@basic-app.com>
  * @license MIT
  * @link https://basic-app.com
  */
 namespace BasicApp\Crud\Actions;
-  
+
+use Exception;
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Security\Exceptions\SecurityException;
 use BasicApp\Crud\Events\BeforeDeleteEvent;
@@ -29,7 +31,7 @@ class DeleteAction extends \BasicApp\Action\BaseAction
 
         $return = function($method, ...$params) use ($backUrl, $beforeDeleteEvent, $enableCsrfValidation) {
 
-            if ($this->enableCsrfValidation && ($this->request->method !== 'POST'))
+            if ($this->enableCsrfValidation && ($this->request->getMethod() !== 'POST'))
             {
                 if ($this->request->getGet(csrf_token()) != csrf_hash())
                 {
@@ -53,26 +55,21 @@ class DeleteAction extends \BasicApp\Action\BaseAction
                 throw PageNotFoundException::forPageNotFound();
             }
 
-            if ($beforeDeleteEvent)
-            {
-                $event = new BeforeDeleteEvent($entity);
-
-                $event->trigger($beforeDeleteEvent);
-
-                if ($event->result)
-                {
-                    return $event->result;
-                }
-            }
-
-            $model->deleteEntity($entity);
-
             if (!$backUrl)
             {
                 $backUrl = $this->backUrl;
             }
 
-            return $this->redirectBack($backUrl);
+            $event = new BeforeDeleteEvent($model, $entity, $backUrl);
+
+            if ($beforeDeleteEvent)
+            {
+                $event->trigger($beforeDeleteEvent);
+            }
+
+            assert($model->deleteEntity($event->entity) ? true : false, get_class($model) . '::deleteEntity');
+
+            return $this->redirectBack($event->backUrl);
         };
 
         $return = $return->bindTo($this->controller, get_class($this->controller));

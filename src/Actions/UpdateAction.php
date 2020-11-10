@@ -1,12 +1,13 @@
 <?php
 /**
- * @author Basic App Dev Team
+ * @author Basic App Dev Team <dev@basic-app.com>
  * @license MIT
  * @link https://basic-app.com
  */
 namespace BasicApp\Crud\Actions;
 
 use CodeIgniter\Exceptions\PageNotFoundException;
+use BasicApp\Crud\Events\BeforeUpdateEvent;
 
 class UpdateAction extends \BasicApp\Action\BaseAction
 {
@@ -15,13 +16,17 @@ class UpdateAction extends \BasicApp\Action\BaseAction
 
     protected $backUrl;
 
+    protected $beforeUpdateEvent;
+
     public function _remap($method, ...$params)
     {
         $view = $this->view;
 
         $backUrl = $this->backUrl;
 
-        $return = function($method, ...$params) use ($view, $backUrl) {
+        $beforeUpdateEvent = $this->beforeUpdateEvent;
+
+        $return = function($method, ...$params) use ($view, $backUrl, $beforeUpdateEvent) {
 
             assert($this->formModelClass ? true : false, __CLASS__ . '::formModelClass');
 
@@ -52,6 +57,20 @@ class UpdateAction extends \BasicApp\Action\BaseAction
             if ($post)
             {
                 $hasChanged = $model->fillEntity($entity, $post);
+                
+                if ($beforeUpdateEvent)
+                {
+                    $event = new BeforeUpdateEvent($entity, $hasChanged);
+
+                    $event->trigger($beforeUpdateEvent);
+
+                    if (is_array($entity))
+                    {
+                        $entity = $event->entity;
+                    }
+
+                    $hasChanged = $event->hasChanged;
+                }
 
                 if (!$hasChanged || $model->save($entity))
                 {

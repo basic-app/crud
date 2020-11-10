@@ -1,25 +1,24 @@
 <?php
 /**
- * @author Basic App Dev Team
+ * @author Basic App Dev Team <dev@basic-app.com>
  * @license MIT
  * @link https://basic-app.com
  */
 namespace BasicApp\Crud\Actions;
 
 use BasicApp\Controller\ControllerInterface;
+use BasicApp\Crud\Events\BeforeFindEvent;
 
 class IndexAction extends \BasicApp\Action\BaseAction
 {
 
-    protected $perPage = 25;
+    protected $perPage;
 
     protected $view = 'index';
 
     protected $orderBy;
 
     protected $beforeFindEvent;
-
-    protected $renderEvent;
     
     public function _remap($method, ...$params)
     {
@@ -27,11 +26,11 @@ class IndexAction extends \BasicApp\Action\BaseAction
         
         $perPage = $this->perPage;
         
-        $beforeFind = $this->beforeFind;
+        $beforeFindEvent = $this->beforeFindEvent;
 
         $orderBy = $this->orderBy;
 
-        $return = function($method, ...$params) use ($view, $perPage, $beforeFind, $orderBy) {
+        $return = function($method, ...$params) use ($view, $perPage, $orderBy, $beforeFindEvent) {
 
             assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
 
@@ -101,14 +100,9 @@ class IndexAction extends \BasicApp\Action\BaseAction
                 $parentId = null;
             }            
 
-            if ($orderBy)
+            if (!$orderBy)
             {
-                $query->orderBy($orderBy);
-            }
-
-            if ($beforeFind)
-            {
-                $this->$beforeFind($query);
+                $orderBy = $this->orderBy;
             }
 
             if (!$perPage)
@@ -116,21 +110,31 @@ class IndexAction extends \BasicApp\Action\BaseAction
                 $perPage = $this->perPage;
             }
 
-            if ($perPage)
+            $event = new BeforeFindEvent($model, $query, $perPage, $orderBy);
+
+            if ($beforeFindEvent)
             {
-                $elements = $query->paginate($perPage);
+                $event->trigger($beforeFindEvent);
+            }
+
+            if ($event->orderBy)
+            {
+                $query->orderBy($event->orderBy);
+            }
+
+            if ($event->perPage)
+            {
+                $elements = $query->paginate($event->perPage);
             }
             else
             {
                 $elements = $query->findAll();
             }
 
-            $pager = $query->pager;
-
             return $this->render($view, [
                 'model' => $model,
                 'elements' => $elements,
-                'pager' => $pager,
+                'pager' => $query->pager,
                 'parentKey' => $this->parentKey,
                 'parentId' => $parentId,
                 'searchModel' => $searchModel,

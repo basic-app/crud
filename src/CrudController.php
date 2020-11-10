@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Basic App Dev Team
+ * @author Basic App Dev Team <dev@basic-app.com>
  * @license MIT
  * @link https://basic-app.com
  */
@@ -26,6 +26,10 @@ abstract class CrudController extends \BasicApp\Controller\BaseController
     protected $perPage = 25;
 
     protected $backUrl = 'index';
+
+    protected $orderBy;
+
+    protected $enableCsrfValidation = true;
 
     protected $actions = [
         'index' => [IndexAction::class],

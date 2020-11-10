@@ -6,24 +6,20 @@
  */
 namespace BasicApp\Crud\Events;
 
-class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
+class AfterLoadEvent extends \BasicApp\Event\BaseEvent
 {
 
     public $model;
 
     public $entity;
 
-    public $backUrl;
-
-    public function __construct($model, $entity, $backUrl)
+    public function __construct($model, $entity)
     {
         parent::__construct();
 
         $this->model = $model;
 
         $this->entity = $entity;
-
-        $this->backUrl = $backUrl;
     }
 
-}
+} 

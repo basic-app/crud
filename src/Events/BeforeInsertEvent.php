@@ -6,7 +6,7 @@
  */
 namespace BasicApp\Crud\Events;
 
-class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
+class BeforeInsertEvent extends \BasicApp\Event\BaseEvent
 {
 
     public $model;
@@ -15,7 +15,9 @@ class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
 
     public $backUrl;
 
-    public function __construct($model, $entity, $backUrl)
+    public $customErrors = [];
+
+    public function __construct($model, $entity, $backUrl, $customErrors)
     {
         parent::__construct();
 
@@ -24,6 +26,8 @@ class BeforeDeleteEvent extends \BasicApp\Event\BaseEvent
         $this->entity = $entity;
 
         $this->backUrl = $backUrl;
+
+        $this->customErrors = $customErrors;
     }
 
 }

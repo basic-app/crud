@@ -1,23 +1,28 @@
 <?php
 /**
- * @author Basic App Dev Team
+ * @author Basic App Dev Team <dev@basic-app.com>
  * @license MIT
  * @link https://basic-app.com
  */
 namespace BasicApp\Crud\Actions;
 
 use CodeIgniter\Exceptions\PageNotFoundException;
+use BasicApp\Crud\Events\AfterLoadEvent;
 
 class ViewAction extends \BasicApp\Action\BaseAction
 {
 
     protected $view = 'view';
 
+    protected $afterLoadEvent;
+
     public function _remap($method, ...$params)
     {
         $view = $this->view;
 
-        $return = function($method, ...$params) use ($view) {
+        $afterLoadEvent = $this->afterLoadEvent;
+
+        $return = function($method, ...$params) use ($view, $afterLoadEvent) {
 
             assert($this->modelClass ? true : false, __CLASS__ . '::modelClass');
 
@@ -39,10 +44,17 @@ class ViewAction extends \BasicApp\Action\BaseAction
                 throw PageNotFoundException::forPageNotFound();
             }
 
-            $parentId = $model->entityParentKey($entity);
+            $event = new AfterLoadEvent($model, $entity);
+
+            if ($afterLoadEvent)
+            {
+                $event->trigger($afterLoadEvent);
+            }
+
+            $parentId = $model->entityParentKey($event->entity);
 
             return $this->render($view, [
-                'entity' => $entity,
+                'entity' => $event->entity,
                 'model' => $model,
                 'parentId' => $parentId,
                 'parentKey' => $this->parentKey
@@ -53,6 +65,5 @@ class ViewAction extends \BasicApp\Action\BaseAction
 
         return $return;
     }
-    
 
 }
