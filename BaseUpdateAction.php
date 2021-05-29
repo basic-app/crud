@@ -23,6 +23,14 @@ abstract class BaseUpdateAction extends Action
         {
             $data = $this->fillEntity($data, $post);
 
+            if ($data instanceof \CodeIgniter\Entity)
+            {
+                if (!$data->hasChanged())
+                {
+                    return $this->redirectBack($this->returnUrl);
+                }
+            }
+
             if ($model->save($data))
             {
                 return $this->redirectBack($this->returnUrl);
