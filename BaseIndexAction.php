@@ -19,8 +19,6 @@ abstract class BaseIndexAction extends Action
     {
         $model = $this->createModel();
 
-        $query = $model->builder();
-
         $searchModel = $this->createSearchModel();
 
         if ($searchModel)
@@ -31,16 +29,16 @@ abstract class BaseIndexAction extends Action
             {
                 if (is_array($search) || !method_exists($search, 'applyToQuery'))
                 {
-                    $searchModel->applyToQuery($query, $search);
+                    $searchModel->applyToQuery($model, $search);
                 }
                 else
                 {
-                    $search->applyToQuery($query);
+                    $search->applyToQuery($model);
                 }
             }
             else
             {
-                $query->where('1=0');
+                $model->where('1=0');
             }
         }
         else
@@ -56,11 +54,11 @@ abstract class BaseIndexAction extends Action
 
             if ($parentId)
             {
-                $query->where($parentKey, $parentId);
+                $model->where($parentKey, $parentId);
             }
             else
             {
-                $query->where($parentKey, null);
+                $model->where($parentKey, null);
             }
         }
         else
@@ -70,29 +68,29 @@ abstract class BaseIndexAction extends Action
 
         if ($this->orderBy)
         {
-            $query->orderBy($this->orderBy);
+            $model->orderBy($this->orderBy);
         }
 
         if (is_callable($this->beforeFind))
         {
-            call_user_func($this->beforeFind, $query);
+            call_user_func($this->beforeFind, $model);
         }
 
         $perPage = $this->perPage;
 
         if ($perPage)
         {
-            $elements = $query->paginate($perPage);
+            $elements = $model->paginate($perPage);
         }
         else
         {
-            $elements = $query->findAll();
+            $elements = $model->findAll();
         }
 
         return $this->render($this->view, [
             'model' => $model,
             'elements' => $elements,
-            'pager' => $query->pager,
+            'pager' => $model->pager,
             'parentId' => $parentId,
             'parentKey' => $parentKey,
             'searchModel' => $searchModel,
